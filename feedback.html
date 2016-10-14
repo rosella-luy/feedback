@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Feedback</title>
+    <link rel="stylesheet" type="text/css" href="feedback.css">
+</head>
+<body>
+<div class="header_txt">
+    <h1 class="">User Feedback</h1>
+    <p>Please indicate the type of problem you‘ve encountered. You can provide futher details in the box provided
+    </p>
+</div>
+<form>
+    <input type="hidden" name="news_id" id="news_id" value="8c5ff38ab7a722b09735421aa13b98a6">
+    <input type="hidden" name="news_category" id="news_category" value="Mixed">
+    <input type="hidden" name="news_url" id="news_url" value="https://www.yahoo.com/news/m/bb772fd7-4b63-37aa-af38-a820421879c9/5-social-media-marketing.html">
+    <input type="hidden" name="news_country" id="news_country">
+    <input type="hidden" name="news_language" id="news_language">
+    <input type="hidden" name="news_entryId" id="news_entryId">
+    <input type="hidden" name="back" id="back" value="">
+    <p class="checkbox"><input type="checkbox" name="error[]" value="Category"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Category mismatch</span></p>
+    <p class="checkbox"><input type="checkbox" name="error[]" value="Text"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Typesetting errors</span></p>
+    <p class="checkbox"><input type="checkbox" name="error[]" value="Picture"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Photo mismatch</span></p>
+    <p class="checkbox"><input type="checkbox" name="error[]" value="MissFeatures"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Features missing
+</span></p>
+    <p class="checkbox"><input type="checkbox" name="error[]" value="Title"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Title mismatch</span></p>
+    <p class="checkbox"><input type="checkbox" name="error[]" value="Inappropriate"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Inappropriate/offensive content</span></p>
+    <p class="checkbox" style="margin-bottom:0.36rem;"><input type="checkbox" name="error[]" value="Others"><img class="checked" src="img/checkbox.jpg" alt=""/><img class="nocheck" src="img/checkboxOn.jpg" alt=""/><span>Other (Please specify)</span></p>
+    <!-- <textarea id="textarea" class="details" placeholder="Please inform the problem you’ve encountered. We’ll handle it as soon as possible. (optional)" rows="3" maxlength="5000" name="details"></textarea>
+    <p class="txtarea-num"><span><i id="txtNum">0</i>/5000</span></p > -->
+    <p><input id="address" type="text" name="text" autocomplete="off" placeholder="Additional details (optional)"></p>
+    <p><input id="email" type="email" name="email" autocomplete="off" placeholder="Your Email (Optional)"></p>
+    <p><input id="sendBtn" type="button" value="Send" disabled="" class="disabled"></p>
+</form>
+<div class="cover"></div>
+<div class="alert_box">
+    <div class="errorImg">
+        <div class="Img">
+            <p class="imgtop"></p>
+            <p class="imgbottom"></p>
+        </div>
+        <p class="Text">Failed</p>
+    </div>
+    <p class="errorTxt">Failed to submit your feedback. Please try again later.</p>
+    <p class="right">
+        <button id="cancel">Cancel</button>
+        <button id="retry">Retry</button>
+    </p>
+</div>
+<script type="text/javascript">
+    function GetQueryString(name) {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+    document.getElementById('news_id').value = GetQueryString('id');
+    document.getElementById('news_category').value = GetQueryString('category');
+    document.getElementById('news_url').value = GetQueryString('url');
+    document.getElementById('back').value = document.referrer;
+
+    var checked = document.getElementsByClassName('checkon');
+    var btn = document.getElementById('sendBtn');
+    function btnCheck(){
+        if(checked.length==0){
+            if(btn.className.indexOf('disabled')==-1){
+                btn.className += "disabled";
+            }
+            btn.disabled = true;
+        }else{
+            btn.className = removeClass(btn.className,'disabled');
+            btn.disabled = false;
+        }
+    }
+    function removeClass(name,delstr){
+        var str = '';
+        var arr = name.split(' ');
+        for(var j=0;j<arr.length;j++){
+            if(arr[j] != delstr){
+                str += arr[j]+' ';
+            }
+        }
+        return str;
+    }
+    var oImg = document.getElementsByClassName('checkbox');
+    for(var i=0;i<oImg.length;i++){
+        var item = oImg[i];
+        item.addEventListener('click',function(){
+            var name = this.className;
+            if(name.indexOf('checkon') == -1){//没点击状态
+                this.className = name + ' checkon';
+            }else{//点击状态
+                this.className = removeClass(name,'checkon');
+            }
+            this.firstChild.checked = !this.firstChild.checked;
+            btnCheck();
+        },false);
+    }
+
+    function showResult(text){
+        var div = document.createElement("div");
+        div.id = "infoBox";
+        div.className = "info-box";
+        div.innerHTML = '<p>'+text+'</p>';
+        document.body.appendChild(div);
+        var infoBox = document.getElementById('infoBox');
+        infoBox.style.display = 'block';
+        setTimeout(function(){
+            infoBox.style.display = 'none';
+            window.history.back();
+        },1000);
+    }
+
+
+    var cover = document.getElementsByClassName('cover')[0];
+    var alert_box = document.getElementsByClassName('alert_box')[0];
+    btn.addEventListener('click',function(){
+        var checkon = document.getElementsByClassName('checkon');
+        var error = [];
+        for(var i=0;i<checkon.length;i++){
+            error.push(checkon[i].getElementsByTagName('input')[0].value);
+        }
+        var data = {
+            "news_id": GetQueryString('id'),
+            "news_category": GetQueryString('category'),
+            "news_url": GetQueryString('url'),
+            "news_country": GetQueryString('country'),
+            "news_language": GetQueryString('language'),
+            "news_entryId": GetQueryString('entryId'),
+            "back": document.referrer,
+            "error": error,
+            "text": document.getElementById('address').value,
+            "email": document.getElementById('email').value
+        };
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange=function(){
+            if (xmlhttp.readyState==4 && xmlhttp.status==200){
+                if(xmlhttp.responseText==0){
+                    cover.style.display = 'block';
+                    alert_box.style.display = 'block';
+                }else if(xmlhttp.responseText==1){
+                    showResult('Thank you for your feedback!');
+                }
+            }
+        }
+        xmlhttp.open("POST","http://news-feedback.opera.com/",true);
+        xmlhttp.send(JSON.stringify(data));
+    },false);
+    var cancel = document.getElementById('cancel');
+    var retry = document.getElementById('retry');
+    cancel.addEventListener('click',function(){
+        cover.style.display = 'none';
+        alert_box.style.display = 'none';
+    },false);
+    retry.addEventListener('click',function(){
+        btn.click();
+    },false);
+</script>
+
+
+</body></html>
